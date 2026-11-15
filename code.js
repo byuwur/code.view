@@ -909,7 +909,7 @@
     else parent.appendChild(node("span", `byCODEtoken byCODE${part.type}`, text));
   };
 
-  const codeStatus = (source, language, count) => (!source.length ? "No source code." : `${language} \u00b7 ${count} ${count === 1 ? "line" : "lines"}`);
+  const codeStatus = (source, language, count) => (!source.length ? "No source code." : `${language} · ${count} ${count === 1 ? "line" : "lines"}`);
 
   // --- LIFECYCLE ---
   // One instance owns the container; replacement disposes its pending work first.
@@ -1052,7 +1052,7 @@
     wrap.checked = wordWrap;
     wrapLabel.append(wrap, " Word wrap");
     if (wrapControl) actions.appendChild(wrapLabel);
-    const status = node("p", "byVIEWstatus", "Highlighting\u2026");
+    const status = node("p", "byVIEWstatus", "Highlighting...");
     status.setAttribute("role", "status");
     const scroll = node("div", "byCODEscroll");
     scroll.tabIndex = 0;

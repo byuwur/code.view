@@ -159,7 +159,7 @@ For other host pages, call `highlight(source, language)` and insert its fragment
 | `wrapControl`      | `false`     | Show the word-wrap switch; wordWrap also works without it.                                                                                                 |
 | `theme`            | Container   | Initial `"light"` or `"dark"` mode class.                                                                                                                  |
 | `palette`          | Container   | Initial `data-theme` palette, including custom CSS names.                                                                                                  |
-| `fontSize`         | Container   | Number in rem or a CSS size such as `"1.25em"` or `"20px"`; bounded to `0.5rem`–`3rem`.                                                                    |
+| `fontSize`         | Container   | Number in rem or a CSS size such as `"1.25em"` or `"20px"`; bounded to `0.5rem`-`3rem`.                                                                    |
 | `themeToggle`      | `true`      | Show the theme toggle.                                                                                                                                     |
 | `fontSizeControls` | `true`      | Show text-size controls.                                                                                                                                   |
 | `copyButton`       | `true`      | Show full source copy button.                                                                                                                              |
