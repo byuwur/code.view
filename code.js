@@ -403,6 +403,7 @@
   // Yield original source slices while carrying lexical context across lines and nested templates.
   function* scriptTokens(source, language, start = 0, end = source.length, stop = "", depth = 0) {
     const profile = profiles[language];
+    const { singleQuotes = true } = profile;
     let i = start,
       braces = 0,
       canRegex = true,
@@ -601,7 +602,7 @@
         canRegex = false;
         continue;
       } else if (
-        (char === '"' || (char === "'" && profile.singleQuotes !== false) || (char === "`" && (profile.backticks || ["php", "sql", "javascript", "typescript", "jsx", "tsx"].includes(language)))) &&
+        (char === '"' || (char === "'" && singleQuotes) || (char === "`" && (profile.backticks || ["php", "sql", "javascript", "typescript", "jsx", "tsx"].includes(language)))) &&
         (language !== "yaml" || i === 0 || /[\s:[{,?\-]/.test(source[i - 1]))
       ) {
         type = language === "sql" && char !== "'" ? "property" : "string";
@@ -917,6 +918,17 @@
     if (!(element instanceof HTMLElement)) throw new TypeError("byCODEviewer: element must be an HTMLElement.");
     // Validate appearance before disposing the current instance, so invalid options leave it usable.
     applyAppearance(element, options);
+    const {
+      animations = true,
+      appearAnimation = false,
+      displayContainer = true,
+      controlsCompact = true,
+      credits = true,
+      themeToggle = true,
+      fontSizeControls = true,
+      copyButton: showCopyButton = true,
+      toolbar: showToolbar = true
+    } = options;
     const painted = element.classList.contains("byVIEWready");
     instances.get(element)?.destroy();
     const state = { active: true };
@@ -935,8 +947,8 @@
     instances.set(element, state);
     element.replaceChildren();
     element.classList.add("byCODEdocument");
-    element.classList.toggle("byVIEWmotion", options.animations !== false);
-    const appear = options.animations !== false && options.appearAnimation === true;
+    element.classList.toggle("byVIEWmotion", animations);
+    const appear = animations && appearAnimation;
     element.classList.toggle("byVIEWappear", appear);
     if (painted && !appear) element.classList.add("byVIEWready");
     else {
@@ -948,8 +960,8 @@
         });
       });
     }
-    element.classList.toggle("byVIEWplain", options.displayContainer === false);
-    element.classList.toggle("byVIEWcompact", options.controlsCompact !== false);
+    element.classList.toggle("byVIEWplain", !displayContainer);
+    element.classList.toggle("byVIEWcompact", controlsCompact);
     element.classList.toggle("byVIEWbottom", options.controlsPosition === "bottom");
     const content = node("div", "byVIEWcontent");
     const toolbar = node("div", "byVIEWtoolbar");
@@ -966,15 +978,15 @@
       if (info.childNodes.length) info.append(` · v${byCODEviewer.VERSION} · `);
       info.appendChild(link);
     }
-    if (options.credits !== false) toolbar.appendChild(info);
+    if (credits) toolbar.appendChild(info);
     const controls = node("div", "byVIEWcontrols");
     controls.setAttribute("role", "group");
     controls.setAttribute("aria-label", "Viewer controls");
-    if (options.themeToggle !== false) appendThemeToggle(element, controls, "code");
-    if (options.fontSizeControls !== false) appendFontSizeControls(element, controls);
-    if (options.copyButton !== false) appendCopyButton(controls, getText, "Copy source");
+    if (themeToggle) appendThemeToggle(element, controls, "code");
+    if (fontSizeControls) appendFontSizeControls(element, controls);
+    if (showCopyButton) appendCopyButton(controls, getText, "Copy source");
     if (controls.childNodes.length) toolbar.appendChild(controls);
-    if (options.toolbar === false || !toolbar.childNodes.length) {
+    if (!showToolbar || !toolbar.childNodes.length) {
       element.classList.remove("byVIEWbottom");
       element.appendChild(content);
     } else element.append(...(options.controlsPosition === "bottom" ? [content, toolbar] : [toolbar, content]));
@@ -1017,14 +1029,15 @@
   function byCODEviewer(element, source, options = {}) {
     if (source === undefined) source = element?.textContent ?? "";
     if (typeof source !== "string") throw new TypeError("Code source must be a string.");
-    options = { language: "plain", lineNumbers: true, wordWrap: true, languageSelect: false, ...options };
+    options = { language: "plain", ...options };
+    const { lineNumbers = true, wordWrap = true, languageSelect = false, wrapControl = false, statusBar = true } = options;
     let language = languageName(options.language),
       generation = 0;
     const state = mount(element, options, () => source);
     const actions = node("div", "byVIEWactions");
     const selector = node("select");
     selector.setAttribute("aria-label", "Code language");
-    if (options.languageSelect !== false) {
+    if (languageSelect) {
       for (const value of byCODEviewer.languages) {
         const option = node("option", "", value);
         option.value = value;
@@ -1036,9 +1049,9 @@
     const wrapLabel = node("label"),
       wrap = node("input");
     wrap.type = "checkbox";
-    wrap.checked = Boolean(options.wordWrap);
+    wrap.checked = wordWrap;
     wrapLabel.append(wrap, " Word wrap");
-    if (options.wrapControl === true) actions.appendChild(wrapLabel);
+    if (wrapControl) actions.appendChild(wrapLabel);
     const status = node("p", "byVIEWstatus", "Highlighting\u2026");
     status.setAttribute("role", "status");
     const scroll = node("div", "byCODEscroll");
@@ -1073,7 +1086,7 @@
           line = node("div", "byCODEline");
           line.dataset.line = String(++lineNumber);
           // Keep visual line numbers out of source selection and assistive reading.
-          if (options.lineNumbers !== false) {
+          if (lineNumbers) {
             const number = node("span", "byCODElineNumber", lineNumber);
             number.setAttribute("aria-hidden", "true");
             line.appendChild(number);
@@ -1097,7 +1110,7 @@
         if (!state.active || version !== generation) return false;
         lines.style.setProperty("--by-code-line-digits", String(Math.max(2, String(lineNumber).length)));
         lines.replaceChildren(fragment);
-        status.hidden = options.statusBar === false && source.length > 0;
+        status.hidden = !statusBar && source.length > 0;
         status.textContent = codeStatus(source, language, lineNumber);
         element.setAttribute("aria-busy", "false");
         return true;
@@ -1116,11 +1129,12 @@
 
   // Optional code-block presentation preserves the fragment's exact source text.
   byCODEviewer.highlight = (source, language = "plain", options = {}) => {
+    const { highlighting = true, lineNumbers = false, statusBar = false } = options;
     const fragment = document.createDocumentFragment(),
       wrapper = node("span", "byCODEhighlight"),
-      tokens = byCODEviewer.tokenize(source, options.highlighting === false ? "plain" : language);
+      tokens = byCODEviewer.tokenize(source, !highlighting ? "plain" : language);
     applyAppearance(wrapper, { theme: options.theme, palette: options.palette });
-    if (!options.lineNumbers && !options.statusBar) {
+    if (!lineNumbers && !statusBar) {
       for (const part of tokens) appendToken(wrapper, part);
     } else {
       wrapper.classList.add("byCODEblock");
@@ -1130,7 +1144,7 @@
       const newLine = () => {
         const line = node("span", "byCODEline");
         count += 1;
-        if (options.lineNumbers) {
+        if (lineNumbers) {
           const number = node("span", "byCODElineNumber");
           number.dataset.line = String(count);
           number.setAttribute("aria-hidden", "true");
@@ -1155,7 +1169,7 @@
       wrapper.setAttribute("role", "region");
       wrapper.setAttribute("aria-label", label);
       // Labels live in attributes/CSS so copying textContent returns only the original code.
-      if (options.statusBar) {
+      if (statusBar) {
         const status = node("span", "byCODEstatus");
         status.dataset.label = label;
         status.setAttribute("aria-hidden", "true");
