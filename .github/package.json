@@ -1,5 +1,5 @@
 {
-  "name": "easy-code-viewer-release",
+  "name": "code.view",
   "private": true,
   "engines": {
     "node": ">=22"

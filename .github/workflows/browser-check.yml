@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: easy-code-viewer
+          path: code.view
       - uses: actions/checkout@v4
         if: inputs.suite == 'playground'
         with:
@@ -44,7 +44,7 @@ jobs:
       - name: Run focused checks
         env:
           NODE_PATH: ${{ runner.temp }}/browser-tests/node_modules
-        working-directory: easy-code-viewer
+        working-directory: code.view
         timeout-minutes: 2
         run: |
           node --check code.js

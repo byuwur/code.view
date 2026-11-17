@@ -1,5 +1,5 @@
 {
-  "repository": "byuwur/easy-code-viewer",
+  "repository": "byuwur/code.view",
   "branch": "main",
   "kind": "easy",
   "runtime": ["code.js", "code.css", "code.themes.css"],

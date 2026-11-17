@@ -1,9 +1,9 @@
 "use strict";
 /*
  * File: code.js
- * Desc: Standalone CODE viewer. No runtime dependencies.
+ * Desc: Standalone CODE.view. No runtime dependencies.
  * Copyright (c) 2026 Andres Trujillo [Mateus] byUwUr
- * https://github.com/byuwur/easy-code-viewer
+ * https://github.com/byuwur/code.view
  * MIT License (see LICENSE).
  */
 (function (global) {
@@ -169,8 +169,8 @@
     const document = element.ownerDocument;
     if (document.defaultView.getComputedStyle(document.documentElement).getPropertyValue("--by-code-themes-loaded").trim() === "1") return;
     warnedPalettes.add(palette);
-    // console.warn(`easy-code-viewer: Palette "${palette}" requires code.themes.css. Import it after code.css. https://byuwur.github.io/easy-code-viewer/`);
-    console.warn(`easy-code-viewer: Palette "${palette}" requires code.themes.css. Import it after code.css. https://code.byuwur.co/`);
+    // console.warn(`CODE.view: Palette "${palette}" requires code.themes.css. Import it after code.css. https://byuwur.github.io/code.view/`);
+    console.warn(`CODE.view: Palette "${palette}" requires code.themes.css. Import it after code.css. https://code.byuwur.co/`);
   };
 
   // Explicit appearance options override markup; omitted values preserve the container's state.
@@ -968,7 +968,7 @@
     toolbar.dataset.size = ["xs", "small", "regular", "large", "xl"].includes(options.controlsSize) ? options.controlsSize : "regular";
     const info = node("small", "byVIEWinfo");
     for (const [text, href] of [
-      ["easy-code-viewer", "https://github.com/byuwur/easy-code-viewer"],
+      ["CODE.view", "https://github.com/byuwur/code.view"],
       ["@byUwUr", "https://byuwur.co"]
     ]) {
       const link = node("a", "", text);
