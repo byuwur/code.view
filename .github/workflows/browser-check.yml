@@ -33,7 +33,7 @@ jobs:
         if: inputs.suite == 'playground'
         with:
           repository: byuwur/spa.js
-          ref: v20.12
+          ref: v20.13
           path: spa.js
       - uses: actions/setup-node@v4
         with:

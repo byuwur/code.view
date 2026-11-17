@@ -11,7 +11,7 @@
   if (global.byCODEviewer?.initialized) return;
 
   // --- METADATA ---
-  byCODEviewer.VERSION = "1.8"; // 2026-11-15
+  byCODEviewer.VERSION = "1.9"; // 2026-11-16
 
   // --- CONSTANTS ---
   // Language data stays separate from the shared scanner; lookup sets are built once.
