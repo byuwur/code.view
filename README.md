@@ -2,8 +2,6 @@
 
 ![CODE.view preview](prev.jpg)
 
-Development version: **v2** (unreleased). The [latest release](https://github.com/byuwur/code.view/releases/latest) supplies the published files.
-
 **Code, let syntax speak.**
 
 Display source with syntax highlighting, language selection, line numbers, wrapping, and copy controls.
