@@ -5,8 +5,12 @@
   --by-code-themes-loaded: 1;
 }
 
-/* --- THEMES --- */
-/* --- DRACULA --- */
+/* ==========
+ * THEMES
+ * ========== */
+/* ==========
+ * DRACULA
+ * ========== */
 
 .byCODEdocument[data-theme="dracula"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="dracula"]:not(.dark) {
@@ -48,7 +52,9 @@
   --by-code-tag: #ff79c6;
 }
 
-/* --- DARCULA --- */
+/* ==========
+ * DARCULA
+ * ========== */
 
 .byCODEdocument[data-theme="darcula"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="darcula"]:not(.dark) {
@@ -90,7 +96,9 @@
   --by-code-tag: #d99a65;
 }
 
-/* --- NORD --- */
+/* ==========
+ * NORD
+ * ========== */
 
 .byCODEdocument[data-theme="nord"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="nord"]:not(.dark) {
@@ -132,7 +140,9 @@
   --by-code-tag: #99b3cd;
 }
 
-/* --- CATPPUCCIN --- */
+/* ==========
+ * CATPPUCCIN
+ * ========== */
 
 .byCODEdocument[data-theme="catppuccin"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="catppuccin"]:not(.dark) {
@@ -174,7 +184,9 @@
   --by-code-tag: #cba6f7;
 }
 
-/* --- CATPPUCCIN FRAPPÉ --- */
+/* =================
+ * CATPPUCCIN FRAPPÉ
+ * ================= */
 
 .byCODEdocument[data-theme="catppuccin-frappe"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="catppuccin-frappe"]:not(.dark) {
@@ -216,7 +228,9 @@
   --by-code-tag: #cda4e8;
 }
 
-/* --- CATPPUCCIN MACCHIATO --- */
+/* ====================
+ * CATPPUCCIN MACCHIATO
+ * ==================== */
 
 .byCODEdocument[data-theme="catppuccin-macchiato"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="catppuccin-macchiato"]:not(.dark) {
@@ -258,7 +272,9 @@
   --by-code-tag: #c6a0f6;
 }
 
-/* --- ROSÉ PINE --- */
+/* ==========
+ * ROSÉ PINE
+ * ========== */
 
 .byCODEdocument[data-theme="rose-pine"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="rose-pine"]:not(.dark) {
@@ -300,7 +316,9 @@
   --by-code-tag: #eb6f92;
 }
 
-/* --- ROSÉ PINE MOON --- */
+/* ==============
+ * ROSÉ PINE MOON
+ * ============== */
 
 .byCODEdocument[data-theme="rose-pine-moon"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="rose-pine-moon"]:not(.dark) {
@@ -342,7 +360,9 @@
   --by-code-tag: #c4a7e7;
 }
 
-/* --- GRUVBOX --- */
+/* ==========
+ * GRUVBOX
+ * ========== */
 
 .byCODEdocument[data-theme="gruvbox"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="gruvbox"]:not(.dark) {
@@ -384,7 +404,9 @@
   --by-code-tag: #fc8071;
 }
 
-/* --- GRUVBOX MATERIAL --- */
+/* ================
+ * GRUVBOX MATERIAL
+ * ================ */
 
 .byCODEdocument[data-theme="gruvbox-material"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="gruvbox-material"]:not(.dark) {
@@ -426,7 +448,9 @@
   --by-code-tag: #e88e53;
 }
 
-/* --- TOKYO NIGHT --- */
+/* ===========
+ * TOKYO NIGHT
+ * =========== */
 
 .byCODEdocument[data-theme="tokyo-night"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="tokyo-night"]:not(.dark) {
@@ -468,7 +492,9 @@
   --by-code-tag: #bb9af7;
 }
 
-/* --- TOKYO STORM --- */
+/* ===========
+ * TOKYO STORM
+ * =========== */
 
 .byCODEdocument[data-theme="tokyo-storm"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="tokyo-storm"]:not(.dark) {
@@ -510,7 +536,9 @@
   --by-code-tag: #bb9af7;
 }
 
-/* --- TOKYO MOON --- */
+/* ==========
+ * TOKYO MOON
+ * ========== */
 
 .byCODEdocument[data-theme="tokyo-moon"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="tokyo-moon"]:not(.dark) {
@@ -552,7 +580,9 @@
   --by-code-tag: #c099ff;
 }
 
-/* --- ONE --- */
+/* ==========
+ * ONE
+ * ========== */
 
 .byCODEdocument[data-theme="one"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="one"]:not(.dark) {
@@ -594,7 +624,9 @@
   --by-code-tag: #d090e3;
 }
 
-/* --- MATERIAL --- */
+/* ==========
+ * MATERIAL
+ * ========== */
 
 .byCODEdocument[data-theme="material"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="material"]:not(.dark) {
@@ -636,7 +668,9 @@
   --by-code-tag: #cb9aeb;
 }
 
-/* --- MATERIAL OCEAN --- */
+/* ==============
+ * MATERIAL OCEAN
+ * ============== */
 
 .byCODEdocument[data-theme="material-ocean"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="material-ocean"]:not(.dark) {
@@ -678,7 +712,9 @@
   --by-code-tag: #c792ea;
 }
 
-/* --- NIGHT OWL --- */
+/* ==========
+ * NIGHT OWL
+ * ========== */
 
 .byCODEdocument[data-theme="night-owl"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="night-owl"]:not(.dark) {
@@ -720,7 +756,9 @@
   --by-code-tag: #c792ea;
 }
 
-/* --- SYNTHWAVE --- */
+/* ==========
+ * SYNTHWAVE
+ * ========== */
 
 .byCODEdocument[data-theme="synthwave"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="synthwave"]:not(.dark) {
@@ -762,7 +800,9 @@
   --by-code-tag: #f97e72;
 }
 
-/* --- AYU --- */
+/* ==========
+ * AYU
+ * ========== */
 
 .byCODEdocument[data-theme="ayu"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="ayu"]:not(.dark) {
@@ -804,7 +844,9 @@
   --by-code-tag: #ff8f40;
 }
 
-/* --- EVERFOREST --- */
+/* ==========
+ * EVERFOREST
+ * ========== */
 
 .byCODEdocument[data-theme="everforest"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="everforest"]:not(.dark) {
@@ -846,7 +888,9 @@
   --by-code-tag: #e8a080;
 }
 
-/* --- KANAGAWA --- */
+/* ==========
+ * KANAGAWA
+ * ========== */
 
 .byCODEdocument[data-theme="kanagawa"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="kanagawa"]:not(.dark) {
@@ -888,7 +932,9 @@
   --by-code-tag: #a693c3;
 }
 
-/* --- SELENIZED --- */
+/* ==========
+ * SELENIZED
+ * ========== */
 
 .byCODEdocument[data-theme="selenized"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="selenized"]:not(.dark) {
@@ -930,7 +976,9 @@
   --by-code-tag: #c4a7f0;
 }
 
-/* --- VS CODE --- */
+/* ==========
+ * VS CODE
+ * ========== */
 
 .byCODEdocument[data-theme="vscode"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="vscode"]:not(.dark) {
@@ -972,7 +1020,9 @@
   --by-code-tag: #c586c0;
 }
 
-/* --- MONOKAI DIMMED --- */
+/* ==============
+ * MONOKAI DIMMED
+ * ============== */
 
 .byCODEdocument[data-theme="monokai-dimmed"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="monokai-dimmed"]:not(.dark) {
@@ -1014,7 +1064,9 @@
   --by-code-tag: #ce8ea5;
 }
 
-/* --- DISCORD --- */
+/* ==========
+ * DISCORD
+ * ========== */
 
 .byCODEdocument[data-theme="discord"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="discord"]:not(.dark) {
@@ -1056,7 +1108,9 @@
   --by-code-tag: #f5a3da;
 }
 
-/* --- SLACK --- */
+/* ==========
+ * SLACK
+ * ========== */
 
 .byCODEdocument[data-theme="slack"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="slack"]:not(.dark) {
@@ -1098,7 +1152,9 @@
   --by-code-tag: #eba8e4;
 }
 
-/* --- BONYUR --- */
+/* ==========
+ * BONYUR
+ * ========== */
 
 .byCODEdocument[data-theme="bonyur"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="bonyur"]:not(.dark) {
@@ -1140,7 +1196,9 @@
   --by-code-tag: #f59cc8;
 }
 
-/* --- SAKURA --- */
+/* ==========
+ * SAKURA
+ * ========== */
 
 .byCODEdocument[data-theme="sakura"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="sakura"]:not(.dark) {
@@ -1182,7 +1240,9 @@
   --by-code-tag: #ff9fbc;
 }
 
-/* --- BUBBLEGUM --- */
+/* ==========
+ * BUBBLEGUM
+ * ========== */
 
 .byCODEdocument[data-theme="bubblegum"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="bubblegum"]:not(.dark) {
@@ -1224,7 +1284,9 @@
   --by-code-tag: #ff9ade;
 }
 
-/* --- CANDY --- */
+/* ==========
+ * CANDY
+ * ========== */
 
 .byCODEdocument[data-theme="candy"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="candy"]:not(.dark) {
@@ -1266,7 +1328,9 @@
   --by-code-tag: #f6a1ee;
 }
 
-/* --- ROSE GOLD --- */
+/* ==========
+ * ROSE GOLD
+ * ========== */
 
 .byCODEdocument[data-theme="rose-gold"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="rose-gold"]:not(.dark) {
@@ -1308,7 +1372,9 @@
   --by-code-tag: #f2a3bd;
 }
 
-/* --- LAVENDER --- */
+/* ==========
+ * LAVENDER
+ * ========== */
 
 .byCODEdocument[data-theme="lavender"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="lavender"]:not(.dark) {
@@ -1350,7 +1416,9 @@
   --by-code-tag: #cca8ff;
 }
 
-/* --- CYBERPUNK --- */
+/* ==========
+ * CYBERPUNK
+ * ========== */
 
 .byCODEdocument[data-theme="cyberpunk"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="cyberpunk"]:not(.dark) {
@@ -1392,7 +1460,9 @@
   --by-code-tag: #ff7cce;
 }
 
-/* --- SUNSET --- */
+/* ==========
+ * SUNSET
+ * ========== */
 
 .byCODEdocument[data-theme="sunset"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="sunset"]:not(.dark) {
@@ -1434,7 +1504,9 @@
   --by-code-tag: #ff9eaf;
 }
 
-/* --- VOLCANO --- */
+/* ==========
+ * VOLCANO
+ * ========== */
 
 .byCODEdocument[data-theme="volcano"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="volcano"]:not(.dark) {
@@ -1476,7 +1548,9 @@
   --by-code-tag: #ffab84;
 }
 
-/* --- AMBER --- */
+/* ==========
+ * AMBER
+ * ========== */
 
 .byCODEdocument[data-theme="amber"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="amber"]:not(.dark) {
@@ -1518,7 +1592,9 @@
   --by-code-tag: #ffc766;
 }
 
-/* --- TERMINAL --- */
+/* ==========
+ * TERMINAL
+ * ========== */
 
 .byCODEdocument[data-theme="terminal"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="terminal"]:not(.dark) {
@@ -1560,7 +1636,9 @@
   --by-code-tag: #7df58b;
 }
 
-/* --- PAPER --- */
+/* ==========
+ * PAPER
+ * ========== */
 
 .byCODEdocument[data-theme="paper"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="paper"]:not(.dark) {
@@ -1602,7 +1680,9 @@
   --by-code-tag: #e0a4a3;
 }
 
-/* --- INK --- */
+/* ==========
+ * INK
+ * ========== */
 
 .byCODEdocument[data-theme="ink"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="ink"]:not(.dark) {
@@ -1644,7 +1724,9 @@
   --by-code-tag: #b7c4d8;
 }
 
-/* --- OCEAN --- */
+/* ==========
+ * OCEAN
+ * ========== */
 
 .byCODEdocument[data-theme="ocean"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="ocean"]:not(.dark) {
@@ -1686,7 +1768,9 @@
   --by-code-tag: #91b8ff;
 }
 
-/* --- FOREST --- */
+/* ==========
+ * FOREST
+ * ========== */
 
 .byCODEdocument[data-theme="forest"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="forest"]:not(.dark) {
@@ -1728,7 +1812,9 @@
   --by-code-tag: #a0d9c4;
 }
 
-/* --- MINT --- */
+/* ==========
+ * MINT
+ * ========== */
 
 .byCODEdocument[data-theme="mint"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="mint"]:not(.dark) {
@@ -1770,7 +1856,9 @@
   --by-code-tag: #97dfd5;
 }
 
-/* --- ICE --- */
+/* ==========
+ * ICE
+ * ========== */
 
 .byCODEdocument[data-theme="ice"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="ice"]:not(.dark) {
@@ -1812,7 +1900,9 @@
   --by-code-tag: #a6bdff;
 }
 
-/* --- SEPIA --- */
+/* ==========
+ * SEPIA
+ * ========== */
 
 .byCODEdocument[data-theme="sepia"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="sepia"]:not(.dark) {

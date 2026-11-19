@@ -3,7 +3,9 @@
 /* Monokai is the default. Classes select mode; named data-theme values select a palette.
    data-theme="light" / "dark" remain mode aliases and override mode classes. */
 
-/* --- VIEWER --- */
+/* ==========
+ * VIEWER
+ * ========== */
 /* Keep host layout transitions out; component rules below opt in to motion. */
 .byCODEdocument,
 .byCODEdocument *,
@@ -31,7 +33,9 @@
   box-sizing: border-box;
 }
 
-/* --- CONTENT --- */
+/* ==========
+ * CONTENT
+ * ========== */
 
 :is(.byCODEdocument, .byCODEblock) *,
 :is(.byCODEdocument, .byCODEblock) *::before,
@@ -215,7 +219,9 @@
   outline-offset: -0.125rem;
 }
 
-/* --- CONTROLS --- */
+/* ==========
+ * CONTROLS
+ * ========== */
 .byCODEdocument > .byVIEWtoolbar {
   position: sticky;
   flex-shrink: 0;
@@ -390,7 +396,9 @@
   font-family: var(--by-view-controls-font, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace);
 }
 
-/* --- INTERACTION --- */
+/* ===========
+ * INTERACTION
+ * =========== */
 .byCODEdocument button {
   -webkit-tap-highlight-color: #0000;
   touch-action: manipulation;
@@ -440,7 +448,9 @@
   min-height: 0;
 }
 
-/* --- MOTION --- */
+/* ==========
+ * MOTION
+ * ========== */
 /* Initial content is immediate unless the entrance animation is explicitly enabled. */
 .byCODEdocument {
   --by-view-motion-duration: 0s;
@@ -534,8 +544,12 @@
   transition: opacity var(--by-view-motion-duration) ease-out !important;
 }
 
-/* --- THEMES --- */
-/* --- LIGHT --- */
+/* ==========
+ * THEMES
+ * ========== */
+/* ==========
+ * LIGHT
+ * ========== */
 .byCODEdocument,
 .byCODEdocument.light:not([data-theme="dark"]),
 .byCODEdocument[data-theme="light"],
@@ -569,7 +583,9 @@
   --by-code-tag: #b71956;
 }
 
-/* --- DARK --- */
+/* ==========
+ * DARK
+ * ========== */
 .byCODEdocument.dark:not([data-theme="light"]),
 .byCODEdocument[data-theme="dark"],
 :is(.byCODEhighlight, .byCODEblock).dark:not([data-theme="light"]),
@@ -599,7 +615,9 @@
   --by-code-tag: #f92672;
 }
 
-/* --- GITHUB --- */
+/* ==========
+ * GITHUB
+ * ========== */
 /* Light */
 .byCODEdocument[data-theme="github"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="github"]:not(.dark) {
@@ -657,7 +675,9 @@
   --by-code-tag: #7ee787;
 }
 
-/* --- SOLARIZED --- */
+/* ==========
+ * SOLARIZED
+ * ========== */
 /* Light */
 .byCODEdocument[data-theme="solarized"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="solarized"]:not(.dark) {
@@ -715,7 +735,9 @@
   --by-code-tag: #268bd2;
 }
 
-/* --- HIGH CONTRAST --- */
+/* =============
+ * HIGH CONTRAST
+ * ============= */
 /* Light */
 .byCODEdocument[data-theme="high-contrast"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="high-contrast"]:not(.dark) {

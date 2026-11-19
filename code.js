@@ -7,13 +7,19 @@
  * MIT License (see LICENSE).
  */
 (function (global) {
-  // --- INITIALIZATION ---
+  // ==============
+  // INITIALIZATION
+  // ==============
   if (global.byCODEviewer?.initialized) return;
 
-  // --- METADATA ---
+  // ==========
+  // METADATA
+  // ==========
   byCODEviewer.VERSION = "2.1"; // 2026-11-18
 
-  // --- CONSTANTS ---
+  // ==========
+  // CONSTANTS
+  // ==========
   // Language data stays separate from the shared scanner; lookup sets are built once.
   // prettier-ignore
   const profiles = {
@@ -101,12 +107,117 @@
     profile.lineComments ||= [];
   }
   // prettier-ignore
-  const aliases = {"js": "javascript", "mjs": "javascript", "cjs": "javascript", "ts": "typescript", "htm": "html", "svg": "xml", "xhtml": "xml", "yml": "yaml", "py": "python", "pyw": "python", "sh": "bash", "shell": "bash", "zsh": "bash", "text": "plain", "txt": "plain", "plaintext": "plain", "c++": "cpp", "cc": "cpp", "cxx": "cpp", "hpp": "cpp", "h": "c", "c#": "csharp", "cs": "csharp", "kt": "kotlin", "kts": "kotlin", "sc": "scala", "objc": "objectivec", "objective-c": "objectivec", "m": "objectivec", "rs": "rust", "golang": "go", "rb": "ruby", "pl": "perl", "pm": "perl", "jl": "julia", "ps1": "powershell", "psm1": "powershell", "pwsh": "powershell", "bat": "batch", "cmd": "batch", "hs": "haskell", "ex": "elixir", "exs": "elixir", "erl": "erlang", "hrl": "erlang", "f#": "fsharp", "fs": "fsharp", "fsx": "fsharp", "ml": "ocaml", "mli": "ocaml", "clj": "clojure", "cljs": "clojure", "cljc": "clojure", "edn": "clojure", "commonlisp": "lisp", "common-lisp": "lisp", "cl": "lisp", "scm": "scheme", "ss": "scheme", "rkt": "racket", "nims": "nim", "cr": "crystal", "pas": "pascal", "pp": "pascal", "f": "fortran", "f90": "fortran", "f95": "fortran", "cob": "cobol", "cpy": "cobol", "vb": "vbnet", "visualbasic": "vbnet", "ada95": "ada", "ads": "ada", "adb": "ada", "sol": "solidity", "sv": "systemverilog", "svh": "systemverilog", "vhd": "vhdl", "vert": "glsl", "frag": "glsl", "shader": "hlsl", "gql": "graphql", "proto": "protobuf", "properties": "ini", "cfg": "ini", "conf": "ini", "docker": "dockerfile", "make": "makefile", "mk": "makefile", "cmake.in": "cmake", "terraform": "hcl", "tf": "hcl", "md": "markdown", "mdown": "markdown", "patch": "diff", "asm": "assembly", "nasm": "assembly", "vlang": "v", "gd": "gdscript", "gamemaker": "gml"};
+  const aliases = {
+    "js": "javascript",
+    "mjs": "javascript",
+    "cjs": "javascript",
+    "ts": "typescript",
+    "htm": "html",
+    "svg": "xml",
+    "xhtml": "xml",
+    "yml": "yaml",
+    "py": "python",
+    "pyw": "python",
+    "sh": "bash",
+    "shell": "bash",
+    "zsh": "bash",
+    "text": "plain",
+    "txt": "plain",
+    "plaintext": "plain",
+    "c++": "cpp",
+    "cc": "cpp",
+    "cxx": "cpp",
+    "hpp": "cpp",
+    "h": "c",
+    "c#": "csharp",
+    "cs": "csharp",
+    "kt": "kotlin",
+    "kts": "kotlin",
+    "sc": "scala",
+    "objc": "objectivec",
+    "objective-c": "objectivec",
+    "m": "objectivec",
+    "rs": "rust",
+    "golang": "go",
+    "rb": "ruby",
+    "pl": "perl",
+    "pm": "perl",
+    "jl": "julia",
+    "ps1": "powershell",
+    "psm1": "powershell",
+    "pwsh": "powershell",
+    "bat": "batch",
+    "cmd": "batch",
+    "hs": "haskell",
+    "ex": "elixir",
+    "exs": "elixir",
+    "erl": "erlang",
+    "hrl": "erlang",
+    "f#": "fsharp",
+    "fs": "fsharp",
+    "fsx": "fsharp",
+    "ml": "ocaml",
+    "mli": "ocaml",
+    "clj": "clojure",
+    "cljs": "clojure",
+    "cljc": "clojure",
+    "edn": "clojure",
+    "commonlisp": "lisp",
+    "common-lisp": "lisp",
+    "cl": "lisp",
+    "scm": "scheme",
+    "ss": "scheme",
+    "rkt": "racket",
+    "nims": "nim",
+    "cr": "crystal",
+    "pas": "pascal",
+    "pp": "pascal",
+    "f": "fortran",
+    "f90": "fortran",
+    "f95": "fortran",
+    "cob": "cobol",
+    "cpy": "cobol",
+    "vb": "vbnet",
+    "visualbasic": "vbnet",
+    "ada95": "ada",
+    "ads": "ada",
+    "adb": "ada",
+    "sol": "solidity",
+    "sv": "systemverilog",
+    "svh": "systemverilog",
+    "vhd": "vhdl",
+    "vert": "glsl",
+    "frag": "glsl",
+    "shader": "hlsl",
+    "gql": "graphql",
+    "proto": "protobuf",
+    "properties": "ini",
+    "cfg": "ini",
+    "conf": "ini",
+    "docker": "dockerfile",
+    "make": "makefile",
+    "mk": "makefile",
+    "cmake.in": "cmake",
+    "terraform": "hcl",
+    "tf": "hcl",
+    "md": "markdown",
+    "mdown": "markdown",
+    "patch": "diff",
+    "asm": "assembly",
+    "nasm": "assembly",
+    "vlang": "v",
+    "gd": "gdscript",
+    "gamemaker": "gml"
+  };
   byCODEviewer.languages = Object.freeze(["html", "xml", ...Object.keys(profiles), "plain"]);
 
-  // --- STATE ---
+  // ==========
+  // STATE
+  // ==========
   const instances = new WeakMap();
-  // --- HELPERS ---
+  // ==========
+  // HELPERS
+  // ==========
   const node = (tag, className = "", text) => {
     const element = document.createElement(tag);
     element.className = className;
@@ -116,7 +227,9 @@
   // Yield at a chunk boundary so input events and replacement renders can run.
   const pause = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-  // --- APPEARANCE ---
+  // ==========
+  // APPEARANCE
+  // ==========
   const extraPalettes = new Set([
     "dracula",
     "darcula",
@@ -195,7 +308,9 @@
     }
   };
 
-  // --- CONTROLS ---
+  // ==========
+  // CONTROLS
+  // ==========
   // Mirrored across the family so each viewer can run without a shared runtime.
   /**
    * Adds container light/dark controls, retaining legacy stylesheet links as a fallback.
@@ -356,7 +471,9 @@
     });
   };
 
-  // --- PARSING ---
+  // ==========
+  // PARSING
+  // ==========
   // Resolve supported aliases; unknown names deliberately fall back to uncolored source.
   const languageName = (value) => {
     const name = String(value ?? "plain")
@@ -903,7 +1020,9 @@
       }
     }
   }
-  // --- RENDERING ---
+  // ==========
+  // RENDERING
+  // ==========
   const appendToken = (parent, part, text = part.text) => {
     if (part.type === "plain") parent.appendChild(document.createTextNode(text));
     else parent.appendChild(node("span", `byCODEtoken byCODE${part.type}`, text));
@@ -911,7 +1030,9 @@
 
   const codeStatus = (source, language, count) => (!source.length ? "No source code." : `${language} · ${count} ${count === 1 ? "line" : "lines"}`);
 
-  // --- LIFECYCLE ---
+  // ==========
+  // LIFECYCLE
+  // ==========
   // One instance owns the container; replacement disposes its pending work first.
   // Replace the previous owner and return its cancellable state. Only the current owner may clear the host.
   const mount = (element, options, getText) => {
@@ -1001,30 +1122,9 @@
     return state;
   };
 
-  // --- PUBLIC API ---
-  // Yield original slices, including whitespace. Validation runs when the iterator is consumed.
-  // Return a lazy token stream; input and resource-limit errors occur when iteration advances.
-  byCODEviewer.tokenize = function* (source, language) {
-    if (typeof source !== "string") throw new TypeError("Code source must be a string.");
-    if (source.length > 2000000 || source.split("\n").length > 20000) throw new RangeError("Code exceeds 2 million characters or 20,000 lines.");
-    const name = languageName(language);
-    const iterator =
-      name === "plain"
-        ? [token("plain", source)]
-        : name === "php"
-          ? phpTokens(source)
-          : ["html", "xml"].includes(name)
-            ? markupTokens(source, name)
-            : ["markdown", "diff"].includes(name)
-              ? textTokens(source, name)
-              : scriptTokens(source, name);
-    let count = 0;
-    for (const part of iterator) {
-      if (++count > 100000) throw new RangeError("Code exceeds 100,000 lexical tokens.");
-      if (part.text) yield part;
-    }
-  };
-
+  // ==========
+  // PUBLIC API
+  // ==========
   // Stateful lexical highlighting; source is never interpreted as HTML or executed.
   function byCODEviewer(element, source, options = {}) {
     if (source === undefined) source = element?.textContent ?? "";
@@ -1068,7 +1168,9 @@
     };
     syncWrap();
     wrap.addEventListener("change", syncWrap);
-    // --- RENDERING ---
+    // ==========
+    // RENDERING
+    // ==========
     const render = async () => {
       // A later language selection supersedes any render paused between token chunks.
       const version = ++generation;
@@ -1127,6 +1229,29 @@
     return { ready: state.ready, destroy: state.destroy };
   }
 
+  // Yield original slices, including whitespace. Validation runs when the iterator is consumed.
+  // Return a lazy token stream; input and resource-limit errors occur when iteration advances.
+  byCODEviewer.tokenize = function* (source, language) {
+    if (typeof source !== "string") throw new TypeError("Code source must be a string.");
+    if (source.length > 2000000 || source.split("\n").length > 20000) throw new RangeError("Code exceeds 2 million characters or 20,000 lines.");
+    const name = languageName(language);
+    const iterator =
+      name === "plain"
+        ? [token("plain", source)]
+        : name === "php"
+          ? phpTokens(source)
+          : ["html", "xml"].includes(name)
+            ? markupTokens(source, name)
+            : ["markdown", "diff"].includes(name)
+              ? textTokens(source, name)
+              : scriptTokens(source, name);
+    let count = 0;
+    for (const part of iterator) {
+      if (++count > 100000) throw new RangeError("Code exceeds 100,000 lexical tokens.");
+      if (part.text) yield part;
+    }
+  };
+
   // Optional code-block presentation preserves the fragment's exact source text.
   byCODEviewer.highlight = (source, language = "plain", options = {}) => {
     const { highlighting = true, lineNumbers = false, statusBar = false } = options;
@@ -1180,7 +1305,9 @@
     fragment.appendChild(wrapper);
     return fragment;
   };
-  // --- EXPORT ---
+  // ==========
+  // EXPORT
+  // ==========
   global.byCODEviewer = byCODEviewer;
   byCODEviewer.initialized = true;
 })(typeof window !== "undefined" ? window : this);

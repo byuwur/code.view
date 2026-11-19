@@ -21,6 +21,9 @@ test("CODE library", { timeout: 30000 }, async (t) => {
   page.on("pageerror", (error) => errors.push(error.message));
   // Load authored files directly; CDN availability is not part of this contract.
   await page.route("**/*", (route) => route.abort());
+  // ===============
+  // BROWSER FIXTURE
+  // ===============
   await page.setContent('<!doctype html><meta charset="UTF-8"><div id="viewer"></div>');
   await page.addStyleTag({ path: path.join(__dirname, "../code.css") });
   await page.addScriptTag({ path: path.join(__dirname, "../code.js") });
@@ -28,6 +31,9 @@ test("CODE library", { timeout: 30000 }, async (t) => {
     window.root = document.getElementById("viewer");
   });
 
+  // ==================
+  // RENDERING BEHAVIOR
+  // ==================
   await t.test("renders the complete source and copies it unchanged", async () => {
     const source = "const value = 7;\nconsole.log(value);";
     assert.equal(
