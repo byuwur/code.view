@@ -926,7 +926,7 @@
       const line = source.slice(i, end);
       let type = "plain";
       if (language === "diff") {
-        type = /^(?:@@|diff |index |---|\+\+\+)/.test(line) ? "keyword" : /^\+/.test(line) ? "string" : /^-/.test(line) ? "comment" : "plain";
+        type = /^(?:@@|diff |index |---|\+\+\+)/.test(line) ? "keyword" : line.startsWith("+") ? "string" : line.startsWith("-") ? "comment" : "plain";
       } else if (/^\s*(`{3,}|~{3,})/.test(line)) {
         const fence = line.match(/^\s*(`{3,}|~{3,})/)[1];
         i = end < source.length ? end + 1 : end;
