@@ -38,7 +38,7 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
       // Simulate a loaded tag without contacting Google or using the property.
       return route.fulfill({ contentType: "application/javascript", body: "window.testTagLoaded = true;" });
     }
-    if (url.pathname === "/_privacy.js" && url.hostname === "spa.byuwur.co") {
+    if (url.href === "https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.16/_privacy.min.js") {
       // Exercise the site's consent callback without a framework checkout or network access.
       return route.fulfill({
         contentType: "application/javascript",
@@ -80,9 +80,19 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
   });
   assert.ok(increments.some((hit) => hit.action === "page_view"));
   await page.evaluate(() => window.chooseAnalytics("no"));
+  await page.waitForLoadState("networkidle");
+  assert.equal(increments.length, count + 1, "rejecting does not recount the current page");
   await page.reload();
   await page.waitForLoadState("networkidle");
-  assert.equal(increments.length, count + 1);
+  assert.equal(increments.length, count + 2);
+  assert.deepEqual(increments.at(-1), {
+    action: "page_view",
+    surface: "landing",
+    resource: "code_view",
+    origin: "https://code.byuwur.co",
+    cookie: undefined,
+    referrer: undefined
+  });
   assert.equal(loads, 0);
   assert.equal(await page.evaluate(() => window.bySiteAnalytics.begin("resource_loaded") === undefined), true);
   await page.waitForFunction(() => typeof window.chooseAnalytics === "function");
