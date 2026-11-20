@@ -4,6 +4,22 @@
    data-theme="light" / "dark" remain mode aliases and override mode classes. */
 
 /* ===== VIEWER ===== */
+@property --_view-paper {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --_view-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --by-view-alt {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #eed;
+}
+
 /* Keep host layout transitions out; component rules below opt in to motion. */
 .byCODEdocument,
 .byCODEdocument *,
@@ -12,6 +28,8 @@
   transition: none !important;
 }
 .byCODEdocument {
+  --_view-paper: var(--by-view-document-bg, var(--by-view-bg));
+  --_view-surface: var(--by-view-container-bg, var(--by-view-bg));
   position: relative;
   display: flex;
   flex-direction: column;
@@ -21,7 +39,7 @@
   padding: 0 1rem 0.75rem;
   border: 0.0625rem solid var(--by-view-border);
   border-radius: var(--by-view-radius, 0.75rem);
-  background: var(--by-view-document-bg, var(--by-view-bg));
+  background: var(--_view-paper);
   color: var(--by-view-text);
   font:
     1rem/1.4 system-ui,
@@ -50,18 +68,15 @@
 .byCODEdocument select {
   max-width: 100%;
   margin: 0;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25em 0.5em;
   border: 0.0625rem solid var(--by-view-border);
   border-radius: var(--by-view-radius, 0.625rem);
-  background: var(--by-view-container-bg, var(--by-view-bg));
+  background: var(--_view-surface);
   color: inherit;
   font: inherit;
 }
 .byCODEdocument button {
   cursor: pointer;
-}
-.byCODEdocument button:hover {
-  background: var(--by-view-alt);
 }
 .byCODEdocument button:disabled {
   opacity: 0.5;
@@ -101,13 +116,13 @@
   margin: 0;
 }
 .byCODEdocument .byCODElines {
-  font: 1rem/var(--by-view-line-height, 1.5) var(--by-view-content-font, ui-monospace, monospace);
+  font: 1em/var(--by-view-line-height, 1.5) var(--by-view-content-font, ui-monospace, monospace);
   min-width: 100%;
   width: max-content;
 }
 :is(.byCODEdocument, .byCODEblock) .byCODEline {
   display: flex;
-  min-height: 1.5rem;
+  min-height: 1lh;
 }
 :is(.byCODEdocument, .byCODEblock) .byCODElineNumber {
   flex: 0 0 calc(var(--by-code-line-digits, 3) * 1ch + 1.25rem + 0.0625rem);
@@ -118,6 +133,9 @@
   white-space: nowrap;
   color: var(--by-view-secondary, #665);
   user-select: none;
+}
+.byCODEdocument .byCODElineNumber {
+  background: color-mix(in srgb, var(--by-view-alt) 40%, var(--_view-surface));
 }
 :is(.byCODEdocument, .byCODEblock) .byCODEtext {
   padding: 0 0.625rem;
@@ -157,7 +175,7 @@
   background: var(--by-view-container-bg, var(--by-view-alt, #eed));
   color: var(--by-view-secondary, #665);
   font:
-    1rem/1.4 system-ui,
+    1em/1.4 system-ui,
     sans-serif;
 }
 .byCODEblock > .byCODEstatus::before {
@@ -193,7 +211,7 @@
   overflow: hidden;
   border: 0.0625rem solid var(--by-view-border);
   border-radius: var(--by-view-radius, 0.625rem);
-  background: var(--by-view-container-bg, var(--by-view-bg));
+  background: var(--_view-surface);
 }
 .byCODEdocument.byVIEWplain .byVIEWpanel {
   border: 0;
@@ -227,7 +245,7 @@
   gap: 0.125em;
   margin: 0;
   padding: 0.5em 0;
-  background: #0000;
+
   font: 0.875rem/1.25 var(--by-view-controls-font, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace);
   white-space: normal;
 }
@@ -303,7 +321,7 @@
   padding: 0.25em 0.5em;
   border: 0.0625em solid var(--by-view-border);
   border-radius: var(--by-view-radius, 0.625em);
-  background: var(--by-view-container-bg, var(--by-view-bg));
+  background: var(--_view-surface);
   color: inherit;
   font: inherit;
   line-height: 1;
@@ -311,7 +329,9 @@
   cursor: pointer;
 }
 .byCODEdocument > .byVIEWtoolbar button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
+  outline: 0.0625rem dashed currentColor;
+  outline-offset: -0.25em;
   cursor: not-allowed;
 }
 .byCODEdocument > .byVIEWtoolbar button:focus-visible {
@@ -394,15 +414,12 @@
 .byCODEdocument button {
   -webkit-tap-highlight-color: #0000;
   touch-action: manipulation;
-  transition:
-    background-color var(--by-view-motion-duration, 0s) ease,
-    box-shadow var(--by-view-motion-duration, 0s) ease-out !important;
 }
 .byCODEdocument button:not(:disabled):hover {
-  background: color-mix(in srgb, currentColor 7%, var(--by-view-container-bg, var(--by-view-bg)));
+  background: color-mix(in srgb, currentColor 7%, var(--_view-surface));
 }
 .byCODEdocument button:not(:disabled):active {
-  background: color-mix(in srgb, currentColor 13%, var(--by-view-container-bg, var(--by-view-bg)));
+  background: color-mix(in srgb, currentColor 13%, var(--_view-surface));
 }
 .byCODEdocument button:focus-visible {
   outline: 0.125rem solid var(--by-view-accent);
@@ -452,23 +469,25 @@
 .byCODEdocument:not(.byVIEWready) {
   transition: none !important;
 }
-/* Background fades stay on shared surfaces, never individual rows or syntax tokens. */
+/* Interpolate the shared surfaces once, including inside scrolling content. */
 .byCODEdocument.byVIEWready {
   transition:
-    background-color var(--by-view-motion-duration, 0s) ease,
-    opacity var(--by-view-motion-duration, 0s) ease !important;
+    --_view-paper var(--by-view-motion-duration) linear,
+    --_view-surface var(--by-view-motion-duration) linear,
+    --by-view-alt var(--by-view-motion-duration) linear,
+    color var(--by-view-motion-duration) steps(2, jump-none),
+    opacity var(--by-view-motion-duration) ease !important;
 }
-.byCODEdocument :is(.byVIEWpanel, .byVIEWstatus) {
-  transition: background-color var(--by-view-motion-duration, 0s) ease !important;
+.byCODEdocument.byVIEWready .byVIEWstatus {
+  transition:
+    background-color var(--by-view-motion-duration) linear,
+    color var(--by-view-motion-duration) steps(2, jump-none) !important;
 }
 .byCODEdocument.byVIEWmotion.byVIEWappear:not(.byVIEWready) {
   opacity: 0;
 }
 .byCODEdocument :is(button, input, select, textarea, summary, a) {
   transition:
-    background-color var(--by-view-motion-duration) ease,
-    color var(--by-view-motion-duration) ease,
-    border-color var(--by-view-motion-duration) ease,
     box-shadow var(--by-view-motion-duration) ease,
     opacity var(--by-view-motion-duration) ease,
     translate var(--by-view-motion-duration) ease-out !important;
@@ -508,8 +527,8 @@
   transition-property: opacity, translate !important;
 }
 @media (forced-colors: active) {
-  .byCODEdocument,
-  .byCODEdocument :is(.byVIEWpanel, .byVIEWstatus) {
+  .byCODEdocument.byVIEWready,
+  .byCODEdocument.byVIEWready :is(.byVIEWpanel, .byVIEWstatus) {
     transition: none !important;
   }
   .byCODEdocument :is(button, input, select, textarea, summary, a) {

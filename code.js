@@ -12,6 +12,11 @@
 
   // ===== METADATA =====
   byCODEviewer.VERSION = "2.2"; // 2026-11-20
+  // Mirrored helpers are checked by code.view/.github/scripts/check-family.mjs.
+  const componentName = "CODE.view";
+  const themeFile = "code";
+  const documentClass = "byCODEdocument";
+  const contentSelector = ":scope > .byVIEWcontent";
 
   // ===== CONSTANTS =====
   // Language data stays separate from the shared scanner; lookup sets are built once.
@@ -268,10 +273,23 @@
   const warnMissingThemes = (element, palette = element.dataset.theme) => {
     if (!extraPalettes.has(palette) || warnedPalettes.has(palette)) return;
     const document = element.ownerDocument;
-    if (document.defaultView.getComputedStyle(document.documentElement).getPropertyValue("--by-code-themes-loaded").trim() === "1") return;
+    if (document.defaultView.getComputedStyle(document.documentElement).getPropertyValue(`--by-${themeFile}-themes-loaded`).trim() === "1") return;
     warnedPalettes.add(palette);
-    // console.warn(`CODE.view: Palette "${palette}" requires code.themes.css. Import it after code.css. https://byuwur.github.io/code.view/`);
-    console.warn(`CODE.view: Palette "${palette}" requires code.themes.css. Import it after code.css. https://code.byuwur.co/`);
+    console.warn(`${componentName}: Palette "${palette}" requires ${themeFile}.themes.css. Import it after ${themeFile}.css. https://${themeFile}.byuwur.co/`);
+  };
+
+  const getLocalTheme = (target) => {
+    if (["light", "dark"].includes(target.dataset.theme)) return target.dataset.theme;
+    if (target.classList.contains("dark")) return "dark";
+    if (target.classList.contains("light")) return "light";
+    return target.dataset.theme ? "light" : null;
+  };
+
+  const setLocalTheme = (element, mode, palette) => {
+    element.classList.toggle("light", mode === "light");
+    element.classList.toggle("dark", mode === "dark");
+    if (palette != null) element.dataset.theme = palette;
+    else if (["light", "dark"].includes(element.dataset.theme)) element.dataset.theme = mode;
   };
 
   // Explicit appearance options override markup; omitted values preserve the container's state.
@@ -283,91 +301,87 @@
     const size = typeof fontSize === "number" ? `${Math.max(0.5, Math.min(3, fontSize))}rem` : typeof fontSize === "string" ? `clamp(0.5rem, ${fontSize}, 3rem)` : "";
     if (fontSize != null && (typeof fontSize === "number" ? !Number.isFinite(fontSize) : typeof fontSize !== "string" || !CSS.supports("font-size", size))) throw new RangeError("Font size must be a finite multiplier or a CSS size.");
     // Keep palette identity in data-theme while light/dark classes select its mode.
-    if (theme != null || palette != null) {
-      const mode = theme ?? (["light", "dark"].includes(element.dataset.theme) ? element.dataset.theme : element.classList.contains("dark") ? "dark" : "light");
-      element.classList.toggle("light", mode === "light");
-      element.classList.toggle("dark", mode === "dark");
-      if (palette != null) element.dataset.theme = palette;
-      else if (["light", "dark"].includes(element.dataset.theme)) element.dataset.theme = mode;
-    }
-    if (fontSize != null) {
-      element.style.fontSize = size;
-      element.dataset.byViewDefaultFontSize = element.style.fontSize;
-    }
+    if (theme != null || palette != null) setLocalTheme(element, theme ?? getLocalTheme(element) ?? "light", palette);
+    return size;
+  };
+
+  const applyContentAppearance = (element, options, content) => {
+    const size = applyAppearance(element, options);
+    const previous = element.querySelector(contentSelector);
+    content.style.fontSize = size || previous?.style.fontSize || "";
+    content.dataset.byViewDefaultFontSize = size || previous?.dataset.byViewDefaultFontSize || "";
+  };
+
+  const syncMotion = (element, options) => {
+    const enabled = options.animations !== false;
+    const appear = enabled && Boolean(options.appearAnimation);
+    element.classList.toggle("byVIEWmotion", enabled);
+    element.classList.toggle("byVIEWappear", appear);
+    return appear;
   };
 
   // ===== CONTROLS =====
   // Mirrored across the family so each viewer can run without a shared runtime.
+  const createThemeButton = () => {
+    const button = node("button", "byVIEWthemeToggle");
+    button.type = "button";
+    button.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 0 1 11.2 3 9 9 0 1 0 21 12.8Z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4m0-14.2-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>';
+    return button;
+  };
+
   /**
    * Adds container light/dark controls, retaining legacy stylesheet links as a fallback.
    * @param {HTMLElement} element Viewer container and theme owner.
    * @param {HTMLElement} controls Toolbar control group.
-   * @param {string} filename Legacy theme stylesheet basename.
-   * @returns {HTMLButtonElement} Theme toggle button.
+   * @returns {{button: HTMLButtonElement, sync: Function}} Mounted theme control.
    */
-  const appendThemeToggle = (element, controls, filename) => {
-    const escapedFilename = filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const themePattern = new RegExp(`^([^?#]*/)?${escapedFilename}\\.(light|dark)\\.css([?#].*)?$`, "i");
+  const appendThemeToggle = (element, controls) => {
+    const themePattern = new RegExp(`^([^?#]*/)?${themeFile}\\.(light|dark)\\.css([?#].*)?$`, "i");
     const stylesheet = [document.getElementById("byVIEWtheme"), ...document.querySelectorAll('link[rel~="stylesheet"]')].find((link) => link && themePattern.test(link.getAttribute("href") || ""));
-    // Explicit container state takes precedence over a shared legacy stylesheet.
-    const localTheme = (target) => {
-      if (["light", "dark"].includes(target.dataset.theme)) return target.dataset.theme;
-      if (target.classList.contains("dark")) return "dark";
-      if (target.classList.contains("light")) return "light";
-      return target.dataset.theme ? "light" : null;
-    };
     const legacyTheme = () => (stylesheet?.isConnected ? (stylesheet.getAttribute("href") || "").match(themePattern) : null);
-    const getTheme = () => localTheme(element) || legacyTheme()?.[2].toLowerCase() || "light";
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "byVIEWthemeToggle";
-    button.innerHTML =
-      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 0 1 11.2 3 9 9 0 1 0 21 12.8Z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4m0-14.2-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>';
+    const getTheme = () => getLocalTheme(element) || legacyTheme()?.[2].toLowerCase() || "light";
+    const button = createThemeButton();
     const sync = () => {
       const next = getTheme() === "dark" ? "light" : "dark";
-      const toggles = !localTheme(element) && legacyTheme() ? [button, ...document.querySelectorAll(".byCODEdocument > .byVIEWtoolbar > .byVIEWcontrols > .byVIEWthemeToggle")] : [button];
+      const toggles = !getLocalTheme(element) && legacyTheme() ? [button, ...document.querySelectorAll(`.${documentClass} > .byVIEWtoolbar > .byVIEWcontrols > .byVIEWthemeToggle`)] : [button];
       for (const toggle of toggles) {
         // A legacy link must not change the controls of independently themed viewers.
-        if (toggle !== button && localTheme(toggle.closest(".byCODEdocument"))) continue;
+        if (toggle !== button && getLocalTheme(toggle.closest(`.${documentClass}`))) continue;
         toggle.title = `Switch to ${next} theme`;
         toggle.setAttribute("aria-label", toggle.title);
       }
     };
     button.addEventListener("click", () => {
       const next = getTheme() === "dark" ? "light" : "dark";
-      if (!localTheme(element) && legacyTheme()) {
+      if (!getLocalTheme(element) && legacyTheme()) {
         const href = stylesheet.getAttribute("href");
         stylesheet.setAttribute(
           "href",
-          href.replace(themePattern, (_, path = "", theme, suffix = "") => `${path}${filename}.${next}.css${suffix}`)
+          href.replace(themePattern, (_, path = "", theme, suffix = "") => `${path}${themeFile}.${next}.css${suffix}`)
         );
-      } else if (element.dataset.theme && !["light", "dark"].includes(element.dataset.theme)) {
-        // Named palettes stay selected while only the mode changes.
-        element.classList.toggle("light", next === "light");
-        element.classList.toggle("dark", next === "dark");
-      } else if (element.hasAttribute("data-theme") || (!element.classList.contains("light") && !element.classList.contains("dark"))) {
-        element.dataset.theme = next;
       } else {
-        element.classList.toggle("light", next === "light");
-        element.classList.toggle("dark", next === "dark");
+        // Preserve attribute-only themes and keep existing mode classes in sync.
+        const palette = element.dataset.theme;
+        if (!element.matches(".light, .dark") && (!palette || ["light", "dark"].includes(palette))) element.dataset.theme = next;
+        else setLocalTheme(element, next, palette === "" ? next : undefined);
       }
       sync();
     });
     button.addEventListener("focus", sync);
     button.addEventListener("pointerenter", sync);
     sync();
-    return controls.appendChild(button);
+    controls.appendChild(button);
+    return { button, sync };
   };
 
   /**
    * Adds text size controls for a renderer.
    * @param {HTMLElement} element - Renderer whose font size is changed.
    * @param {HTMLElement} controls - Toolbar that receives the controls.
-   * @return {HTMLElement} The text size button group.
+   * @return {{group: HTMLElement, sync: Function}} Mounted text size controls.
    */
   const appendFontSizeControls = (element, controls) => {
-    // Remember the caller's initial size so Reset also works after this toolbar is recreated.
-    element.dataset.byViewDefaultFontSize ??= element.style.fontSize;
     const sizes = document.createElement("div");
     sizes.className = "byVIEWfontSizes";
     controls.appendChild(sizes);
@@ -409,7 +423,7 @@
       sync();
     });
     sync();
-    return sizes;
+    return { group: sizes, sync };
   };
 
   /**
@@ -455,6 +469,58 @@
         button.setAttribute("aria-label", button.title);
       }
     });
+    return button;
+  };
+
+  // Keep the toolbar mounted while the current renderer applies option changes.
+  const mountControls = (element, content, initialOptions, getText, version, copyLabel = "Copy source") => {
+    const toolbar = node("div", "byVIEWtoolbar");
+    const controls = node("div", "byVIEWcontrols");
+    controls.setAttribute("role", "group");
+    controls.setAttribute("aria-label", "Viewer controls");
+    const info = node("small", "byVIEWinfo");
+    for (const [text, href] of [
+      [componentName, `https://github.com/byuwur/${themeFile}.view`],
+      ["@byUwUr", "https://byuwur.co"]
+    ]) {
+      const link = node("a", "", text);
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      if (info.childNodes.length) info.append(` · v${version} · `);
+      info.appendChild(link);
+    }
+    const theme = appendThemeToggle(element, controls);
+    const sizes = appendFontSizeControls(content, controls);
+    const copy = appendCopyButton(controls, getText, copyLabel);
+    const update = (options, changes = {}) => {
+      if ("fontSize" in changes || "theme" in changes || "palette" in changes) {
+        applyContentAppearance(element, changes, content);
+        theme.sync();
+        sizes.sync();
+      }
+      Object.assign(options, changes);
+      if ("animations" in changes || "appearAnimation" in changes) syncMotion(element, options);
+      element.classList.toggle("byVIEWcompact", options.controlsCompact !== false);
+      const bottom = options.controlsPosition === "bottom";
+      toolbar.dataset.size = ["xs", "small", "regular", "large", "xl"].includes(options.controlsSize) ? options.controlsSize : "regular";
+      if (!toolbar.childElementCount || ["credits", "themeToggle", "fontSizeControls", "copyButton"].some((key) => key in changes)) {
+        controls.replaceChildren();
+        if (options.themeToggle !== false) controls.appendChild(theme.button);
+        if (options.fontSizeControls !== false) controls.appendChild(sizes.group);
+        if (options.copyButton !== false) controls.appendChild(copy);
+        toolbar.replaceChildren();
+        if (options.credits !== false) toolbar.appendChild(info);
+        if (controls.childElementCount) toolbar.appendChild(controls);
+      }
+      const visible = options.toolbar !== false && toolbar.childElementCount > 0;
+      element.classList.toggle("byVIEWbottom", visible && bottom);
+      if (!visible) toolbar.remove();
+      else if (bottom && toolbar !== element.lastElementChild) element.appendChild(toolbar);
+      else if (!bottom && toolbar !== element.firstElementChild) element.prepend(toolbar);
+    };
+    update(initialOptions);
+    return update;
   };
 
   // ===== PARSING =====
@@ -1013,26 +1079,18 @@
   const codeStatus = (source, language, count) => (!source.length ? "No source code." : `${language} · ${count} ${count === 1 ? "line" : "lines"}`);
 
   // ===== LIFECYCLE =====
-  // One instance owns the container; replacement disposes its pending work first.
   // Replace the previous owner and return its cancellable state. Only the current owner may clear the host.
-  const mount = (element, options, getText) => {
+  const mount = (element, options, getText, previous) => {
     if (!(element instanceof HTMLElement)) throw new TypeError("byCODEviewer: element must be an HTMLElement.");
     // Validate appearance before disposing the current instance, so invalid options leave it usable.
-    applyAppearance(element, options);
-    const {
-      animations = true,
-      appearAnimation = false,
-      displayContainer = true,
-      controlsCompact = true,
-      credits = true,
-      themeToggle = true,
-      fontSizeControls = true,
-      copyButton: showCopyButton = true,
-      toolbar: showToolbar = true
-    } = options;
+    const content = node("div", "byVIEWcontent");
+    if (!previous) applyContentAppearance(element, options, content);
     const painted = element.classList.contains("byVIEWready");
-    instances.get(element)?.destroy();
-    const state = { active: true };
+    if (previous) {
+      previous.active = false;
+      cancelAnimationFrame(previous.motionFrame);
+    } else instances.get(element)?.destroy();
+    const state = { active: true, getText, content, mountedContent: previous?.mountedContent ?? content, api: previous?.api ?? {} };
     state.destroy = () => {
       if (!state.active) return;
       state.active = false;
@@ -1041,16 +1099,27 @@
       if (instances.get(element) === state) {
         instances.delete(element);
         element.replaceChildren();
-        element.classList.remove("byCODEdocument", "byVIEWcompact", "byVIEWbottom", "byVIEWmotion", "byVIEWappear", "byVIEWready");
+        element.classList.remove(documentClass, "byVIEWplain", "byVIEWcompact", "byVIEWbottom", "byVIEWmotion", "byVIEWappear", "byVIEWready");
         element.removeAttribute("aria-busy");
       }
     };
     instances.set(element, state);
+    state.error = (error) => {
+      if (!state.active) return;
+      element.setAttribute("aria-busy", "false");
+      const message = node("p", "byVIEWerror", error.message);
+      message.setAttribute("role", "alert");
+      state.content.replaceChildren(message);
+    };
+    if (previous) {
+      element.classList.add("byVIEWready");
+      state.updateControls = previous.updateControls;
+      return state;
+    }
     element.replaceChildren();
-    element.classList.add("byCODEdocument");
-    element.classList.toggle("byVIEWmotion", animations);
-    const appear = animations && appearAnimation;
-    element.classList.toggle("byVIEWappear", appear);
+    element.classList.add(documentClass);
+    element.classList.toggle("byVIEWplain", options.displayContainer === false);
+    const appear = syncMotion(element, options);
     if (painted && !appear) element.classList.add("byVIEWready");
     else {
       // Paint opacity 0 before starting each requested fade.
@@ -1061,57 +1130,25 @@
         });
       });
     }
-    element.classList.toggle("byVIEWplain", !displayContainer);
-    element.classList.toggle("byVIEWcompact", controlsCompact);
-    element.classList.toggle("byVIEWbottom", options.controlsPosition === "bottom");
-    const content = node("div", "byVIEWcontent");
-    const toolbar = node("div", "byVIEWtoolbar");
-    toolbar.dataset.size = ["xs", "small", "regular", "large", "xl"].includes(options.controlsSize) ? options.controlsSize : "regular";
-    const info = node("small", "byVIEWinfo");
-    for (const [text, href] of [
-      ["CODE.view", "https://github.com/byuwur/code.view"],
-      ["@byUwUr", "https://byuwur.co"]
-    ]) {
-      const link = node("a", "", text);
-      link.href = href;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      if (info.childNodes.length) info.append(` · v${byCODEviewer.VERSION} · `);
-      info.appendChild(link);
-    }
-    if (credits) toolbar.appendChild(info);
-    const controls = node("div", "byVIEWcontrols");
-    controls.setAttribute("role", "group");
-    controls.setAttribute("aria-label", "Viewer controls");
-    if (themeToggle) appendThemeToggle(element, controls, "code");
-    if (fontSizeControls) appendFontSizeControls(element, controls);
-    if (showCopyButton) appendCopyButton(controls, getText, "Copy source");
-    if (controls.childNodes.length) toolbar.appendChild(controls);
-    if (!showToolbar || !toolbar.childNodes.length) {
-      element.classList.remove("byVIEWbottom");
-      element.appendChild(content);
-    } else element.append(...(options.controlsPosition === "bottom" ? [content, toolbar] : [toolbar, content]));
-    state.content = content;
-    state.error = (error) => {
-      if (!state.active) return;
-      element.setAttribute("aria-busy", "false");
-      const message = node("p", "byVIEWerror", error.message);
-      message.setAttribute("role", "alert");
-      content.replaceChildren(message);
-    };
+    element.appendChild(content);
+    state.updateControls = mountControls(element, content, options, (event) => instances.get(element).getText(event), byCODEviewer.VERSION);
     return state;
   };
 
   // ===== PUBLIC API =====
   // Stateful lexical highlighting; source is never interpreted as HTML or executed.
   function byCODEviewer(element, source, options = {}) {
+    return renderViewer(element, source, options);
+  }
+
+  function renderViewer(element, source, options, previous) {
     if (source === undefined) source = element?.textContent ?? "";
     if (typeof source !== "string") throw new TypeError("Code source must be a string.");
     options = { language: "plain", ...options };
-    const { lineNumbers = true, wordWrap = true, languageSelect = false, wrapControl = false, statusBar = true } = options;
+    const { lineNumbers = true, wordWrap = true, languageSelect = false, wrapControl = false } = options;
     let language = languageName(options.language),
       generation = 0;
-    const state = mount(element, options, () => source);
+    const state = mount(element, options, () => source, previous);
     const actions = node("div", "byVIEWactions");
     const selector = node("select");
     selector.setAttribute("aria-label", "Code language");
@@ -1188,7 +1225,10 @@
         if (!state.active || version !== generation) return false;
         lines.style.setProperty("--by-code-line-digits", String(Math.max(2, String(lineNumber).length)));
         lines.replaceChildren(fragment);
-        status.hidden = !statusBar && source.length > 0;
+        state.syncStatus = () => {
+          status.hidden = options.statusBar === false && source.length > 0;
+        };
+        state.syncStatus();
         status.textContent = codeStatus(source, language, lineNumber);
         element.setAttribute("aria-busy", "false");
         return true;
@@ -1202,7 +1242,38 @@
       render();
     });
     state.ready = render();
-    return { ready: state.ready, destroy: state.destroy };
+    if (previous) {
+      // Publish the replacement together so the current document stays visible while rendering.
+      state.ready = state.ready.then((result) => {
+        if (!state.active) return false;
+        const current = state.mountedContent.querySelector(".byCODEscroll");
+        const left = current?.scrollLeft ?? 0;
+        const top = current?.scrollTop ?? 0;
+        state.mountedContent.replaceChildren(...state.content.childNodes);
+        state.content = state.mountedContent;
+        state.content.querySelector(".byCODEscroll")?.scrollTo(left, top);
+        return result;
+      });
+    }
+    Object.assign(state.api, {
+      ready: state.ready,
+      destroy: state.destroy,
+      setOptions(changes) {
+        if (!state.active) return;
+        const redraw = ["language", "languageSelect", "lineNumbers", "wrapControl"].some((key) => key in changes && changes[key] !== options[key]);
+        state.updateControls(options, changes);
+        if ("displayContainer" in changes) element.classList.toggle("byVIEWplain", changes.displayContainer === false);
+        if (Object.hasOwn(changes, "statusBar")) state.syncStatus?.();
+        if ("wordWrap" in changes) {
+          wrap.checked = changes.wordWrap;
+          syncWrap();
+        }
+        if (redraw) {
+          return renderViewer(element, source, options, state).ready;
+        }
+      }
+    });
+    return state.api;
   }
 
   // Yield original slices, including whitespace. Validation runs when the iterator is consumed.

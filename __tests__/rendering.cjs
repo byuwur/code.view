@@ -30,6 +30,29 @@ test("CODE library", { timeout: 30000 }, async (t) => {
   });
 
   // ===== RENDERING BEHAVIOR =====
+  await t.test("theme toggles preserve the host's attribute and class conventions", async () => {
+    const result = await page.evaluate(async () => {
+      const host = document.body.appendChild(document.createElement("div"));
+      host.dataset.theme = "light";
+      const viewer = byCODEviewer(host, "example");
+      await viewer.ready;
+      const toggle = host.querySelector(".byVIEWthemeToggle");
+      const mode = () => [host.dataset.theme, host.classList.contains("light"), host.classList.contains("dark")];
+      toggle.click();
+      const attributeOnly = mode();
+      viewer.setOptions({ theme: "light" });
+      toggle.click();
+      const combined = mode();
+      viewer.setOptions({ palette: "github" });
+      toggle.click();
+      const named = mode();
+      viewer.destroy();
+      host.remove();
+      return { attributeOnly, combined, named };
+    });
+    assert.deepEqual(result, { attributeOnly: ["dark", false, false], combined: ["dark", false, true], named: ["github", true, false] });
+  });
+
   await t.test("renders the complete source and copies it unchanged", async () => {
     const source = "const value = 7;\nconsole.log(value);";
     assert.equal(
