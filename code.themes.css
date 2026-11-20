@@ -1102,42 +1102,42 @@
 
 .byCODEdocument[data-theme="bonyur"]:not(.dark),
 :is(.byCODEhighlight, .byCODEblock)[data-theme="bonyur"]:not(.dark) {
-  --by-view-muted: #666;
-  --by-view-bg: #fee;
-  --by-view-text: #232;
-  --by-view-border: #888;
-  --by-view-secondary: #666;
-  --by-view-accent: #077;
-  --by-view-alt: #eed;
-  --by-view-string: #572;
-  --by-view-literal: #85a;
-  --by-view-error: #b35;
-  --by-code-comment: #666;
-  --by-code-keyword: #b36;
-  --by-code-string: #572;
-  --by-code-number: #85a;
-  --by-code-property: #178;
-  --by-code-tag: #b36;
+  --by-view-muted: #555;
+  --by-view-bg: #eee;
+  --by-view-text: #111;
+  --by-view-border: #76262b;
+  --by-view-secondary: #505050;
+  --by-view-accent: #900;
+  --by-view-alt: #d8d8d8;
+  --by-view-string: #404040;
+  --by-view-literal: #600;
+  --by-view-error: #a20d29;
+  --by-code-comment: #555;
+  --by-code-keyword: #900;
+  --by-code-string: #404040;
+  --by-code-number: #792039;
+  --by-code-property: #51242a;
+  --by-code-tag: #600;
 }
 
 .byCODEdocument.dark[data-theme="bonyur"],
 :is(.byCODEhighlight, .byCODEblock).dark[data-theme="bonyur"] {
-  --by-view-muted: #9ba;
-  --by-view-bg: #122;
+  --by-view-muted: #aaa;
+  --by-view-bg: #111;
   --by-view-text: #eee;
-  --by-view-border: #777;
-  --by-view-secondary: #9ba;
-  --by-view-accent: #7dd;
-  --by-view-alt: #233;
-  --by-view-string: #dd8;
-  --by-view-literal: #dae;
-  --by-view-error: #f89;
-  --by-code-comment: #9ba;
-  --by-code-keyword: #e9c;
-  --by-code-string: #dd8;
-  --by-code-number: #dae;
-  --by-code-property: #9ce;
-  --by-code-tag: #e9c;
+  --by-view-border: #b4585d;
+  --by-view-secondary: #bbb;
+  --by-view-accent: #f48288;
+  --by-view-alt: #282828;
+  --by-view-string: #ccc;
+  --by-view-literal: #f0b9bc;
+  --by-view-error: #ff8990;
+  --by-code-comment: #aaa;
+  --by-code-keyword: #f48288;
+  --by-code-string: #ccc;
+  --by-code-number: #f0b9bc;
+  --by-code-property: #eee;
+  --by-code-tag: #ff9ca1;
 }
 
 /* ===== SAKURA ===== */
