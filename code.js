@@ -7,19 +7,13 @@
  * MIT License (see LICENSE).
  */
 (function (global) {
-  // ==============
-  // INITIALIZATION
-  // ==============
+  // ===== INITIALIZATION =====
   if (global.byCODEviewer?.initialized) return;
 
-  // ==========
-  // METADATA
-  // ==========
+  // ===== METADATA =====
   byCODEviewer.VERSION = "2.1"; // 2026-11-18
 
-  // ==========
-  // CONSTANTS
-  // ==========
+  // ===== CONSTANTS =====
   // Language data stays separate from the shared scanner; lookup sets are built once.
   // prettier-ignore
   const profiles = {
@@ -211,13 +205,9 @@
   };
   byCODEviewer.languages = Object.freeze(["html", "xml", ...Object.keys(profiles), "plain"]);
 
-  // ==========
-  // STATE
-  // ==========
+  // ===== STATE =====
   const instances = new WeakMap();
-  // ==========
-  // HELPERS
-  // ==========
+  // ===== HELPERS =====
   const node = (tag, className = "", text) => {
     const element = document.createElement(tag);
     element.className = className;
@@ -227,9 +217,7 @@
   // Yield at a chunk boundary so input events and replacement renders can run.
   const pause = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-  // ==========
-  // APPEARANCE
-  // ==========
+  // ===== APPEARANCE =====
   const extraPalettes = new Set([
     "dracula",
     "darcula",
@@ -308,9 +296,7 @@
     }
   };
 
-  // ==========
-  // CONTROLS
-  // ==========
+  // ===== CONTROLS =====
   // Mirrored across the family so each viewer can run without a shared runtime.
   /**
    * Adds container light/dark controls, retaining legacy stylesheet links as a fallback.
@@ -471,9 +457,7 @@
     });
   };
 
-  // ==========
-  // PARSING
-  // ==========
+  // ===== PARSING =====
   // Resolve supported aliases; unknown names deliberately fall back to uncolored source.
   const languageName = (value) => {
     const name = String(value ?? "plain")
@@ -1020,9 +1004,7 @@
       }
     }
   }
-  // ==========
-  // RENDERING
-  // ==========
+  // ===== RENDERING =====
   const appendToken = (parent, part, text = part.text) => {
     if (part.type === "plain") parent.appendChild(document.createTextNode(text));
     else parent.appendChild(node("span", `byCODEtoken byCODE${part.type}`, text));
@@ -1030,9 +1012,7 @@
 
   const codeStatus = (source, language, count) => (!source.length ? "No source code." : `${language} · ${count} ${count === 1 ? "line" : "lines"}`);
 
-  // ==========
-  // LIFECYCLE
-  // ==========
+  // ===== LIFECYCLE =====
   // One instance owns the container; replacement disposes its pending work first.
   // Replace the previous owner and return its cancellable state. Only the current owner may clear the host.
   const mount = (element, options, getText) => {
@@ -1122,9 +1102,7 @@
     return state;
   };
 
-  // ==========
-  // PUBLIC API
-  // ==========
+  // ===== PUBLIC API =====
   // Stateful lexical highlighting; source is never interpreted as HTML or executed.
   function byCODEviewer(element, source, options = {}) {
     if (source === undefined) source = element?.textContent ?? "";
@@ -1168,9 +1146,7 @@
     };
     syncWrap();
     wrap.addEventListener("change", syncWrap);
-    // ==========
-    // RENDERING
-    // ==========
+    // ===== RENDERING =====
     const render = async () => {
       // A later language selection supersedes any render paused between token chunks.
       const version = ++generation;
@@ -1305,9 +1281,7 @@
     fragment.appendChild(wrapper);
     return fragment;
   };
-  // ==========
-  // EXPORT
-  // ==========
+  // ===== EXPORT =====
   global.byCODEviewer = byCODEviewer;
   byCODEviewer.initialized = true;
 })(typeof window !== "undefined" ? window : this);

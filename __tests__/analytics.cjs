@@ -13,9 +13,7 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
   const website = await fs.readFile(path.join(__dirname, "../index.html"), "utf8");
   let loads = 0;
   const increments = [];
-  // ========================
-  // BROWSER REQUEST FIXTURES
-  // ========================
+  // ===== BROWSER REQUEST FIXTURES =====
   await context.route("**/*", async (route) => {
     const url = new URL(route.request().url());
     if (url.href === "https://byuwur.co/usage.php") {
@@ -57,14 +55,10 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
   });
   const url = "https://code.byuwur.co/?token=private-sentinel#private-sentinel";
   const events = () => page.evaluate(() => (document.querySelector('iframe[title="Google Analytics"]')?.contentWindow.dataLayer || []).filter((cmd) => cmd[0] === "event").map((cmd) => [cmd[1], cmd[2]]));
-  // ===========================
-  // INVALID AND EXPIRED CONSENT
-  // ===========================
+  // ===== INVALID AND EXPIRED CONSENT =====
   for (const value of ["invalid", "v1.yes.1000000000"]) {
     await context.addCookies([{ name: "byuwur_analytics", value, domain: ".byuwur.co", path: "/", secure: true }]);
-    // ====================
-    // BROWSER INTERACTIONS
-    // ====================
+    // ===== BROWSER INTERACTIONS =====
     await page.goto(url);
     assert.equal(loads, 0);
   }
@@ -92,9 +86,7 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
   assert.equal(loads, 0);
   assert.equal(await page.evaluate(() => window.bySiteAnalytics.begin("resource_loaded") === undefined), true);
   await page.waitForFunction(() => typeof window.chooseAnalytics === "function");
-  // ==================
-  // ACCEPTED ANALYTICS
-  // ==================
+  // ===== ACCEPTED ANALYTICS =====
   await page.evaluate(() => window.chooseAnalytics("yes"));
   await page.waitForFunction(() => document.querySelector('iframe[title="Google Analytics"]')?.contentWindow.testTagLoaded);
   assert.equal(loads, 1);
@@ -134,9 +126,7 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
   assert.ok(!Object.hasOwn(measured[2][1], "field_id"));
   assert.ok(!JSON.stringify(measured).includes("private-sentinel"));
   await page.evaluate(() => window.chooseAnalytics("no"));
-  // ==============================
-  // WITHDRAWAL AND EXCLUDED ROUTES
-  // ==============================
+  // ===== WITHDRAWAL AND EXCLUDED ROUTES =====
   const beforeWithdrawal = increments.length;
   await page.evaluate(() => window.pendingCopy());
   await page.waitForLoadState("networkidle");
