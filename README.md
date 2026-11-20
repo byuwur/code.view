@@ -232,6 +232,8 @@ Legacy integrations can use `#byVIEWtheme` or a detected `code.light.css` / `cod
 
 ## Checks and releases
 
+When all nine viewer and editor repositories are checked out side by side, run `node .github/scripts/check-family.mjs` from CODE.view to check their shared functions for drift.
+
 Use Node.js 22+ and run these commands from the repository root. For playground checks, place sibling checkouts of `spa.js` at `v20.16` next to this repository.
 
 ```sh
