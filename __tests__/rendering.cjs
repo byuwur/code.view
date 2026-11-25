@@ -56,6 +56,44 @@ test("CODE library", { timeout: 30000 }, async (t) => {
     assert.deepEqual(result, { attributeOnly: ["dark", false, false], combined: ["dark", false, true], named: ["github", true, false] });
   });
 
+  await t.test("controls enabled after mounting use the current settings", async () => {
+    const result = await page.evaluate(async () => {
+      const viewer = byCODEviewer(root, "example", { toolbar: false });
+      await viewer.ready;
+      viewer.setOptions({ theme: "dark", fontSize: 3, copyButton: false });
+      const hidden = !root.querySelector(".byVIEWtoolbar");
+      viewer.setOptions({ toolbar: true });
+      const toggle = root.querySelector(".byVIEWthemeToggle");
+      const atMaximum = root.querySelector('[aria-label="Increase text size"]').disabled;
+      const copyHidden = !root.querySelector(".byVIEWcopy");
+      toggle.focus();
+      viewer.setOptions({ toolbar: true, copyButton: false });
+      const focusPreserved = document.activeElement === toggle;
+      viewer.setOptions({ copyButton: true });
+      return [hidden, toggle.title, atMaximum, copyHidden, focusPreserved, Boolean(root.querySelector(".byVIEWcopy"))];
+    });
+    assert.deepEqual(result, [true, "Switch to light theme", true, true, true, true]);
+  });
+
+  await t.test("partial updates preserve disabled flags and undefined restores their defaults", async () => {
+    const states = await page.evaluate(async () => {
+      const viewer = byCODEviewer(root, "example");
+      await viewer.ready;
+      const readFlags = () => [Boolean(root.querySelector(".byVIEWtoolbar")), root.classList.contains("byVIEWmotion"), !root.classList.contains("byVIEWplain"), !root.querySelector(".byVIEWstatus").hidden];
+      const initial = readFlags();
+      viewer.setOptions({ toolbar: false, animations: false, displayContainer: false, statusBar: false });
+      viewer.setOptions({ controlsSize: "small" });
+      const disabled = readFlags();
+      viewer.setOptions({ toolbar: undefined, animations: undefined, displayContainer: undefined, statusBar: undefined });
+      return [initial, disabled, readFlags()];
+    });
+    assert.deepEqual(states, [
+      [true, true, true, true],
+      [false, false, false, false],
+      [true, true, true, true]
+    ]);
+  });
+
   await t.test("renders the complete source and copies it unchanged", async () => {
     const source = "const value = 7;\nconsole.log(value);";
     assert.equal(

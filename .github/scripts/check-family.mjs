@@ -35,7 +35,7 @@ function checkHelpers(projects, names) {
 }
 
 checkHelpers(family, ["node", "warnMissingThemes", "getLocalTheme", "setLocalTheme", "applyAppearance", "syncMotion", "createThemeButton"]);
-checkHelpers(viewers, ["applyContentAppearance", "appendThemeToggle", "appendFontSizeControls", "appendCopyButton", "mountControls"]);
+checkHelpers(viewers, ["applyContentAppearance", "createThemeToggle", "createFontSizeControls", "createCopyButton", "mountControls"]);
 checkHelpers(["code", "csv", "diff", "log", "xml", "yaml"], ["pause"]);
 checkHelpers(["code", "csv", "diff", "xml", "yaml"], ["mount"]);
 checkHelpers(["csv", "diff", "log", "xml", "yaml"], ["button"]);
