@@ -180,6 +180,13 @@ test("CODE playground loads, updates, and copies a starter", { timeout: 30000 },
   await preview.filter({ hasText: "PLAYGROUND_CORE" }).waitFor();
   await page.locator("#copy-html").click();
   await page.waitForFunction(() => typeof window.copiedHTML === "string");
-  assert.match(await page.evaluate(() => window.copiedHTML), /code(?:\.min)?\.js/);
+  const starter = await page.evaluate(() => window.copiedHTML);
+  assert.match(starter, /code(?:\.min)?\.js/);
+  assert.match(starter, /^<!doctype html>\n<html lang="en">\n  <head>\n    <meta /);
+  assert.match(starter, /\n    <script>\n      document\.addEventListener/);
+  assert.equal((await page.locator("#integration-code .byCODEtext").allTextContents()).join("\n"), starter);
+
+  const [download] = await Promise.all([page.waitForEvent("download"), page.locator("#download-html").click()]);
+  assert.equal(await fs.readFile(await download.path(), "utf8"), starter);
   assert.deepEqual(errors, [], "No uncaught playground errors");
 });
