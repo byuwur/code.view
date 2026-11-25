@@ -38,7 +38,7 @@ test("the public website gates the tag, sanitizes events and withdraws pending w
       // Simulate a loaded tag without contacting Google or using the property.
       return route.fulfill({ contentType: "application/javascript", body: "window.testTagLoaded = true;" });
     }
-    if (url.href === "https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.17/_privacy.min.js") {
+    if (url.href === "https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.18/_privacy.min.js") {
       // Exercise the site's consent callback without a framework checkout or network access.
       return route.fulfill({
         contentType: "application/javascript",
