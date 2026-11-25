@@ -11,7 +11,7 @@
   if (global.byCODEviewer?.initialized) return;
 
   // ===== METADATA =====
-  byCODEviewer.VERSION = "2.3"; // 2026-11-20
+  byCODEviewer.VERSION = "2.4"; // 2026-11-25
   // Mirrored helpers are checked by code.view/.github/scripts/check-family.mjs.
   const componentName = "CODE.view";
   const themeFile = "code";
