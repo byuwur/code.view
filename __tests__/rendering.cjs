@@ -22,10 +22,11 @@ test("CODE library", { timeout: 30000 }, async (t) => {
   // Load authored files directly; CDN availability is not part of this contract.
   await page.route("**/*", (route) => route.abort());
   // ===== BROWSER FIXTURE =====
-  await page.setContent(
-    /* HTML */ `<!doctype html><meta charset="UTF-8" />
-      <div id="viewer"></div>`
-  );
+  await page.route("https://viewer.test/", (route) => route.fulfill({
+    contentType: "text/html",
+    body: /* HTML */ `<!doctype html><meta charset="UTF-8" /><div id="viewer"></div>`
+  }));
+  await page.goto("https://viewer.test/");
   await page.addStyleTag({ path: path.join(__dirname, "../code.css") });
   await page.addScriptTag({ path: path.join(__dirname, "../code.js") });
   await page.evaluate(() => {
@@ -122,6 +123,64 @@ test("CODE library", { timeout: 30000 }, async (t) => {
     assert.equal(await page.locator("#viewer img").count(), 0);
     assert.equal(await page.locator(".byCODEtext").textContent(), source);
     assert.equal(await page.evaluate(() => window.injected), undefined);
+  });
+
+  await t.test("loads a relative URL once, preserves the file text, and reuses it on redraw", async () => {
+    const source = "const value = '<b>text</b>';\r\n";
+    let requests = 0;
+    let respond;
+    const response = new Promise((resolve) => { respond = resolve; });
+    await page.route("https://viewer.test/example.js", async (route) => {
+      requests++;
+      await response;
+      await route.fulfill({ contentType: "text/plain", body: source });
+    });
+    await page.evaluate((url) => {
+      window.fileViewer = byCODEviewer(root, `${url}`);
+      window.firstReady = fileViewer.ready;
+      fileViewer.setOptions({ language: "javascript" });
+    }, "./example.js");
+    respond();
+    assert.deepEqual(await page.evaluate(async () => [await firstReady, await fileViewer.ready]), [false, true]);
+    assert.deepEqual(await page.locator(".byCODEtext").allTextContents(), ["const value = '<b>text</b>';", ""]);
+    await page.locator(".byVIEWcopy").click();
+    assert.equal(await page.evaluate(() => window.copied), source);
+    assert.equal(await page.evaluate(() => fileViewer.setOptions({ lineNumbers: false })), true);
+    assert.equal(await page.evaluate(() => byCODEviewer(root, "./example.js", { sourceType: "text" }).ready), true);
+    assert.equal(await page.locator(".byCODEtext").textContent(), "./example.js");
+    assert.equal(requests, 1);
+  });
+
+  await t.test("reports fetch errors and accepts empty files", async () => {
+    await page.route("https://viewer.test/missing.js", (route) => route.fulfill({ status: 404, body: "Not found" }));
+    assert.equal(await page.evaluate(() => byCODEviewer(root, { url: "./missing.js" }).ready), false);
+    assert.match(await page.getByRole("alert").textContent(), /HTTP 404/);
+    assert.equal(await page.locator("#viewer").getAttribute("aria-busy"), "false");
+    await page.route("https://viewer.test/empty.js", (route) => route.fulfill({ body: "" }));
+    assert.equal(await page.evaluate(() => byCODEviewer(root, { url: "./empty.js" }).ready), true);
+    assert.equal(await page.getByRole("status").textContent(), "No source code.");
+  });
+
+  await t.test("destroy and replacement abort pending requests without touching a new viewer", async () => {
+    const result = await page.evaluate(async () => {
+      const fetch = window.fetch;
+      const signals = [];
+      window.fetch = (url, { signal }) => new Promise((resolve, reject) => {
+        signals.push(signal);
+        signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+      });
+      try {
+        const first = byCODEviewer(root, { url: "./first.js" });
+        first.destroy();
+        const second = byCODEviewer(root, { url: "./second.js" });
+        const current = byCODEviewer(root, "current");
+        return [await first.ready, await second.ready, await current.ready, ...signals.map((signal) => signal.aborted)];
+      } finally {
+        window.fetch = fetch;
+      }
+    });
+    assert.deepEqual(result, [false, false, true, true, true]);
+    assert.equal(await page.locator(".byCODEtext").textContent(), "current");
   });
 
   await t.test("replacement and disposal respect the current instance", async () => {

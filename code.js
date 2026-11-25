@@ -1106,6 +1106,7 @@
     state.destroy = () => {
       if (!state.active) return;
       state.active = false;
+      state.request?.abort();
       cancelAnimationFrame(state.motionFrame);
       // An old controller must not clear a replacement mounted on the same element.
       if (instances.get(element) === state) {
@@ -1147,20 +1148,44 @@
     return state;
   };
 
+  const sourceURL = (input, options) => {
+    if (options?.sourceType === "text") return;
+    if (typeof input === "string") return /^(?:https?:\/\/|\.{1,2}\/|\/(?![/*]))[^\s]+$/i.test(input) ? input : undefined;
+    if (input && Object.hasOwn(input, "url") && typeof input.url === "string" && Object.keys(input).length === 1) return input.url.trim() || undefined;
+  };
+  const fetchSource = async (url, signal) => {
+    const response = await fetch(url, { signal });
+    if (!response.ok) throw new Error(`Unable to load source: HTTP ${response.status}.`);
+    return response.text();
+  };
+
   // ===== PUBLIC API =====
   // Stateful lexical highlighting; source is never interpreted as HTML or executed.
   function byCODEviewer(element, source, options = {}) {
-    return renderViewer(element, source, options);
+    return renderViewer(element, source, options, undefined, sourceURL(source, options));
   }
 
-  function renderViewer(element, source, options, previous) {
+  function renderViewer(element, source, options, previous, url) {
     if (source === undefined) source = element?.textContent ?? "";
-    if (typeof source !== "string") throw new TypeError("Code source must be a string.");
+    if (typeof source !== "string" && !url) throw new TypeError("Code source must be a string or an object with a nonempty url.");
     options = { language: "plain", ...options };
     const { lineNumbers = true, wordWrap = true, languageSelect = false, wrapControl = false } = options;
     let language = languageName(options.language),
       generation = 0;
-    const state = mount(element, options, () => source, previous);
+    let loaded = !url;
+    const state = mount(
+      element,
+      options,
+      () => {
+        if (!loaded) throw new Error("Source has not loaded.");
+        return source;
+      },
+      previous
+    );
+    if (url) {
+      state.request = previous?.request ?? new AbortController();
+      state.sourceText = previous?.sourceText ?? fetchSource(url, state.request.signal);
+    }
     const actions = node("div", "byVIEWactions");
     const selector = node("select");
     selector.setAttribute("aria-label", "Code language");
@@ -1179,7 +1204,7 @@
     wrap.checked = wordWrap;
     wrapLabel.append(wrap, " Word wrap");
     if (wrapControl) actions.appendChild(wrapLabel);
-    const status = node("p", "byVIEWstatus", "Highlighting...");
+    const status = node("p", "byVIEWstatus", url ? "Loading source..." : "Highlighting...");
     status.setAttribute("role", "status");
     const scroll = node("div", "byCODEscroll");
     scroll.tabIndex = 0;
@@ -1201,6 +1226,12 @@
       const version = ++generation;
       element.setAttribute("aria-busy", "true");
       try {
+        if (state.sourceText) {
+          source = await state.sourceText;
+          loaded = true;
+          if (!state.active || version !== generation) return false;
+          status.textContent = "Highlighting...";
+        }
         await pause();
         if (!state.active || version !== generation) return false;
         // Build offscreen and publish only after the final cancellation check to avoid partial stale output.
@@ -1285,7 +1316,7 @@
           syncWrap();
         }
         if (redraw) {
-          return renderViewer(element, source, options, state).ready;
+          return renderViewer(element, source, options, state, url).ready;
         }
       }
     });

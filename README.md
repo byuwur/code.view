@@ -64,7 +64,16 @@ Open [index.html](index.html) locally. Its host assets use the network. Exported
 
 ### API
 
-`byCODEviewer(element, source?, options?)` accepts a string; omitted input uses the target's text. Invalid source/target types throw `TypeError`. Empty input displays one line; unsupported languages use plain text. Display splits LF/CRLF lines, while Copy preserves the source, including CR characters and final newlines. Size/token-limit errors display a message and resolve `ready` false.
+`byCODEviewer(element, source?, options?)` accepts source text, a URL string, or a `{ url }` reference. Omitted input uses the target's text. Invalid source/target types throw `TypeError`. Empty input displays one line; unsupported languages use plain text. Display splits LF/CRLF lines, while Copy preserves the source, including CR characters and final newlines. Size/token-limit errors display a message and resolve `ready` false.
+
+Relative URLs resolve against the page. A source string beginning with `https://`, `http://`, `/`, `./`, or `../` and containing no whitespace loads a file. Use `{ url: "example.js" }` for a bare filename. To display a URL string literally, pass `{ sourceType: "text" }` in the options.
+
+```javascript
+const viewer = byCODEviewer(document.getElementById("viewer"), "./examples/hello.js", { language: "javascript" });
+await viewer.ready;
+```
+
+The viewer fetches the file once and reuses its text when options change. HTTP and network errors appear in the viewer and resolve `ready` to `false`. Replacing or destroying the viewer cancels a pending fetch. Cross-origin files require CORS, and the page's `connect-src` policy must allow the source origin.
 
 `byCODEviewer.highlight(source, language = "plain", options = {})` synchronously returns a `DocumentFragment` with one `.byCODEhighlight` wrapper. Its textContent exactly preserves the source, including whitespace and CRLF. It creates no controls, changes no caller DOM, and never evaluates input.
 
