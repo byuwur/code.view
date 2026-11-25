@@ -22,7 +22,10 @@ test("CODE library", { timeout: 30000 }, async (t) => {
   // Load authored files directly; CDN availability is not part of this contract.
   await page.route("**/*", (route) => route.abort());
   // ===== BROWSER FIXTURE =====
-  await page.setContent('<!doctype html><meta charset="UTF-8"><div id="viewer"></div>');
+  await page.setContent(
+    /* HTML */ `<!doctype html><meta charset="UTF-8" />
+      <div id="viewer"></div>`
+  );
   await page.addStyleTag({ path: path.join(__dirname, "../code.css") });
   await page.addScriptTag({ path: path.join(__dirname, "../code.js") });
   await page.evaluate(() => {
@@ -76,7 +79,7 @@ test("CODE library", { timeout: 30000 }, async (t) => {
   });
 
   await t.test("source markup stays inert", async () => {
-    const source = '<img src=x onerror="window.injected=1">';
+    const source = /* HTML */ `<img src="x" onerror="window.injected=1" />`;
     await page.evaluate((source) => byCODEviewer(root, source, { language: "html" }).ready, source);
     assert.equal(await page.locator("#viewer img").count(), 0);
     assert.equal(await page.locator(".byCODEtext").textContent(), source);
