@@ -518,7 +518,9 @@
         }
         if (copyButton) {
           copy ??= createCopyButton(getText, copyLabel);
-          controls.appendChild(copy);
+          const slot = node("div", "byVIEWcopySlot");
+          slot.appendChild(copy);
+          controls.appendChild(slot);
         }
         toolbar.replaceChildren();
         if (credits) toolbar.appendChild(info);
