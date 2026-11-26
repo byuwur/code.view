@@ -35,12 +35,14 @@ function checkHelpers(projects, names) {
 }
 
 checkHelpers(family, ["node", "warnMissingThemes", "getLocalTheme", "setLocalTheme", "applyAppearance", "syncMotion", "createThemeButton"]);
-checkHelpers(viewers, ["applyContentAppearance", "createThemeToggle", "createFontSizeControls", "createCopyButton", "mountControls"]);
+checkHelpers(viewers, ["applyContentAppearance", "createThemeToggle", "createFontSizeControls"]);
+checkHelpers(["code", "csv", "json", "log", "xml", "yaml"], ["createCopyButton", "mountControls"]);
+checkHelpers(["diff", "md"], ["syncCopyShift", "listenForCopyShift"]);
 checkHelpers(["code", "csv", "diff", "log", "xml", "yaml"], ["pause"]);
 checkHelpers(["code", "csv", "diff", "xml", "yaml"], ["mount"]);
 checkHelpers(["csv", "diff", "log", "xml", "yaml"], ["button"]);
 checkHelpers(["csv", "diff", "log"], ["positive"]);
-checkHelpers(["diff", "log", "xml", "yaml"], ["copyButton"]);
+checkHelpers(["log", "xml", "yaml"], ["copyButton"]);
 
 // The iframe target, CSS export selector and format defaults belong to the caller.
 const appearance = /^      \(function appearance\([\s\S]*?^      }\)/m;
